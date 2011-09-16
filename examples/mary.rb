@@ -3,6 +3,7 @@
 # Plays "Mary Had A Little Lamb"
 # Author: Christopher Continanza <christopher.continanza@villanova.edu>
 
+require "rubygems"
 require "nxt"
 
 $DEBUG = true
@@ -11,7 +12,7 @@ def sleeper
  sleep(0.5)
 end
 
-@nxt = NXT.new("/dev/tty.NXT-DevB-1")
+@nxt = NXT.new(ARGV[0] || "/dev/tty.NXT-DevB-1")
 
 #E  D C   D E   E  E
 @nxt.play_tone(659,500)

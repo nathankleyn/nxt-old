@@ -1,10 +1,11 @@
 #!/usr/bin/env ruby -w
 
+require "rubygems"
 require "nxt"
 
 $DEBUG = false
 
-@nxt = NXT.new('/dev/tty.NXT-DevB-1')
+@nxt = NXT.new(ARGV[0] || '/dev/tty.NXT-DevB-1')
 @degrees = 360
 @motor = NXT::MOTOR_B
 

@@ -2,9 +2,10 @@
 
 # TODO this should really be placed in the interactive tests directory...
 
+require "rubygems"
 require "nxt"
 
-$DEV = '/dev/tty.NXT-DevB-1'
+$DEV = ARGV[0] || '/dev/tty.NXT-DevB-1'
 
 @nxt = NXT.new($DEV)
 

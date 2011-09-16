@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby -w
 # example drb client
 
+require "rubygems"
 require "drb"
 
 DRb.start_service

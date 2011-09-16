@@ -1,7 +1,10 @@
 #!/usr/bin/env ruby
 
+require "rubygems"
 require "tk"
 require "nxt"
+
+$DEV = ARGV[0] || "/dev/tty.NXT-DevB-1"
 
 class NXTRemoteControl
   

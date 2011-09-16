@@ -14,20 +14,12 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
-begin
+require "rubygems"
+
   # Need to do a Kernel::require otherwise when included with rubygems, it fails
-  Kernel::require "serialport"
-  require "usb"
+  require "serialport"
+  require "usb"   
   #require "serialport"
-rescue LoadError
-  puts
-  puts "You must have the ruby-serialport and ruby-usb installed!"
-  puts "You can download ruby-serialport from http://rubyforge.org/projects/ruby-serialport/"
-  puts "You can download ruby-usb from http://www.a-k-r.org/ruby-usb/"
-  puts "note: OSX currently requires latest ruby-usb development version from subversion"
-  puts
-  exit 1
-end
 require "thread"
 require "commands"
 

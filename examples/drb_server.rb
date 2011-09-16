@@ -9,7 +9,7 @@ require "thread"
 require "nxt"
 
 $DEBUG = false
-$DEV = '/dev/tty.NXT-DevB-1'
+$DEV = ARGV[0] || '/dev/tty.NXT-DevB-1'
 $SAFE = 1 # disable eval() and friends
 
 class NXTServer

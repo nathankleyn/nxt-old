@@ -4,6 +4,7 @@
 #   telnet localhost 3001
 #   type forward then enter
 
+require "rubygems"
 require "socket"
 require "nxt"
 
@@ -11,7 +12,7 @@ $DEBUG = true
 
 @port = (ARGV[0] || 3001).to_i
 @server = TCPServer.new('localhost', @port)
-@nxt = NXT.new('/dev/tty.NXT-DevB-1')
+@nxt = NXT.new(ARGV[0] || '/dev/tty.NXT-DevB-1')
 
 @move = Commands::Move.new(@nxt)
 
