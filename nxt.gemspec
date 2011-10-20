@@ -9,6 +9,8 @@ Gem::Specification.new do |spec|
   spec.homepage = 'http://github.com/nathankleyn/nxt'
   spec.files = %w(README.markdown Rakefile) + Dir.glob("{lib,spec}/**/*")
   spec.require_path = "lib"
-  
+
+  spec.add_dependency("serialport", "~>1.0.4")
+  spec.add_dependency("ruby-usb", "~>0.2.1")
   spec.add_development_dependency("rspec", "~>2.6.0")
 end
