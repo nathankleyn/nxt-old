@@ -24,7 +24,7 @@ module Commands
       #   m.duration = {:seconds => 4 }
       #   m.duration = {:degrees => 180 }
       #   m.duration = {:rotations => 2 }
-      # To set the duration to unlimited (i.e. rotate indefinitely) you should set 
+      # To set the duration to unlimited (i.e. rotate indefinitely) you should set
       # the duration to :unlimited, although this is equivalent to simply setting it to nil;
       # the following expressions are equivalent:
       #   m.duration = nil
@@ -50,7 +50,7 @@ module Commands
           @duration = duration
         end
       end
-      
+
       def duration
         if duration.nil?
           :unlimited
@@ -59,17 +59,17 @@ module Commands
         end
       end
 
-      protected
+    protected
       def tacho_limit
         if @duration.kind_of? Hash
           if @duration[:rotations]
             tacho_limit = @duration[:rotations] * 360
           end
-        
+
           if @duration[:degrees]
             tacho_limit = @duration[:degrees]
           end
-        
+
           if @duration[:seconds]
             tacho_limit = 0
           end

@@ -35,3 +35,9 @@ Play a tone at 1000 Hz for 500 ms:
 Print out the current battery level:
 
     puts "Battery Level: #{@nxt.get_battery_level/1000.0} V"
+
+## In-progress tasks
+
+* Converting all of the old tests to RSpec unit tests.
+* Try to use Harald for deviceless Bluetooth testing, will simulate responses.
+* Package it up as a gem called "nxt" to replace the original "ruby-nxt" package.

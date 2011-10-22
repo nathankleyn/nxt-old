@@ -14,16 +14,19 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
+$: << File.dirname(File.expand_path(__FILE__))
+
 require "rubygems"
 
 require "serialport"
 require "usb"
 require "thread"
 
-Dir["patches/*.rb", "commands/*.rb"].each do |f|
-  puts f
-  require f
-end
+require "commands/base"
+
+require "patches/array"
+require "patches/bignum"
+require "patches/string"
 
 $DEV ||= true
 $INTERFACE ||= nil
