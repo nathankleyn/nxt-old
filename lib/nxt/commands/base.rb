@@ -45,13 +45,14 @@
 #   puts "Got it!"
 #
 module Commands
-  require 'commands/move'
-  require 'commands/sound'
-  require 'commands/motor'
+  require 'nxt/commands/move'
+  require 'nxt/commands/sound'
+  require 'nxt/commands/motor'
+  require 'nxt/commands/sensor'
 
-  require 'commands/touch_sensor'
-  require 'commands/sound_sensor'
-  require 'commands/light_sensor'
-  require 'commands/ultrasonic_sensor'
-  require 'commands/rotation_sensor'
+  require 'nxt/commands/sensors/touch_sensor'
+  require 'nxt/commands/sensors/sound_sensor'
+  require 'nxt/commands/sensors/light_sensor'
+  require 'nxt/commands/sensors/ultrasonic_sensor'
+  require 'nxt/commands/sensors/rotation_sensor'
 end

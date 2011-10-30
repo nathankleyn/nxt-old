@@ -14,20 +14,15 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
-require "commands/mixins/sensor"
-require "nxt"
+# Implements (and extends) the "Light Sensor" block in NXT-G
+class Commands::LightSensor < Commands::Sensor
 
-# Implements (and extens) the "Light Sensor" block in NXT-G
-class Commands::LightSensor
-  
-  include Commands::Mixins::Sensor
-  
-  attr_reader :port, :generate_light
-  attr_accessor :trigger_point, :comparison
-  
+  attr_reader :generate_light
+  attr_accessor :comparison
+
   def initialize(nxt)
     @nxt      = nxt
-    
+
     # defaults the same as NXT-G
     @port           = 3
     @trigger_point  = 50
@@ -35,17 +30,17 @@ class Commands::LightSensor
     @generate_light = true
     set_mode
   end
-  
+
   # Turns off the sensor's LED light.
   def ambient_mode
     self.generate_light = false
   end
-  
+
   # Turns on the sensor's LED light.
   def illuminated_mode
     self.generate_light = true
   end
-  
+
   # Turns the sensor's LED on or off.
   # Takes true or false as the argument; if true, light will be turned on,
   # if false, light will be turned off.
@@ -53,18 +48,17 @@ class Commands::LightSensor
     @generate_light = on
     set_mode
   end
-  
+
   # intensity of light detected 0-100 in %
   def intensity
     value_scaled
   end
-  alias light_level intensity
-  
+
   # returns the raw value of the sensor
   def raw_value
     value_raw
   end
-  
+
   # sets up the sensor port
   def set_mode
     @generate_light ? mode = NXT::LIGHT_ACTIVE : mode = NXT::LIGHT_INACTIVE
@@ -74,9 +68,12 @@ class Commands::LightSensor
       NXT::PCTFULLSCALEMODE
     )
   end
-  
+
   # attempt to return the input_value requested
   def method_missing(cmd)
     @nxt.get_input_values(NXT.const_get("SENSOR_#{@port}"))[cmd]
   end
+
+  # Aliases
+  alias :light_level :intensity
 end

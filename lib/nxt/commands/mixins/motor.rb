@@ -19,6 +19,7 @@
 module Commands
   module Mixins
     module Motor
+
       # Sets the duration of the motor movement.
       # The parameter should be a Hash like one of the following:
       #   m.duration = {:seconds => 4 }
@@ -38,12 +39,12 @@ module Commands
       #   m.duration = 2.0
       #   m.duration = {:rotations => 2}
       def duration=(duration)
-        if duration.kind_of? Hash
+        if duration.kind_of?(Hash)
           @duration = duration
-        elsif duration.kind_of? Integer
-          @duration = {:seconds => duration}
-        elsif duration.kind_of? Float
-          @duration = {:rotations => duration}
+        elsif duration.kind_of?(Integer)
+          @duration = { :seconds => duration }
+        elsif duration.kind_of?(Float)
+          @duration = { :rotations => duration }
         elsif duration == :unlimited
           @duration = nil
         else
@@ -52,26 +53,19 @@ module Commands
       end
 
       def duration
-        if duration.nil?
-          :unlimited
-        else
-          @duration
-        end
+        # FIXME: Should this be ||= here?
+        @duration || :unlimited
       end
 
     protected
       def tacho_limit
-        if @duration.kind_of? Hash
+        unless @duration.kind_of?(Hash) || @duration[:seconds]
           if @duration[:rotations]
             tacho_limit = @duration[:rotations] * 360
           end
 
           if @duration[:degrees]
             tacho_limit = @duration[:degrees]
-          end
-
-          if @duration[:seconds]
-            tacho_limit = 0
           end
         else
           tacho_limit = 0

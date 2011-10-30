@@ -14,29 +14,28 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
-require "nxt"
-require "commands/mixins/motor"
+require "nxt/commands/mixins/motor"
 
 # Implements the "Move" block in NXT-G
 class Commands::Move
+  include Commands::Mixins::Motor
 
-  include Commands::Mixins::Motor 
-  
   attr_reader   :ports
   attr_accessor :direction
   attr_accessor :left_motor, :right_motor
   attr_accessor :power
   attr_accessor :next_action
-  
+
   def initialize(nxt = NXT.new($DEV))
     @nxt          = nxt
-    
+
     # defaults the same as NXT-G
     @ports        = [:b, :c]
     @direction    = :forward
     @power        = 75
-    @duration     = {:rotations => 1}
+    @duration     = { :rotations => 1 }
     @next_action  = :brake
+
     self.turn_ratio = :straight
   end
 
@@ -44,12 +43,15 @@ class Commands::Move
     # make it flexible, let them specify just :a, or "A", or :a,:b to do two etc.
     case value.class.to_s
       when "Symbol" then @ports = [value]
-      when "String" then @ports = [value.intern]
+      when "String" then @ports = [value.to_sym]
       when "Array"  then @ports = value
-      else raise "Invalid port type #{value.class}"
+      else raise "Invalid port type #{value.class}. Must be a Symbol, String or Array."
+    end
+
+    if @ports.include?(:a) and @ports.include?(:b) and @ports.include?(:c)
+      @ports = [:all]
     end
   end
-  alias port= ports=
 
   def turn_ratio=(turn_ratio)
     # simplified steering... if the user wants fine control, they should just specify -100 to 100
@@ -61,20 +63,7 @@ class Commands::Move
       when :right then @turn_ratio = 50
       else @turn_ratio = turn_ratio
     end
-
-    # DEPRECATED: for backwards compatibility we parse the argument as a hash... I think though that this should be deprecated
-    if turn_ratio.kind_of? Hash
-      old_steering = turn_ratio
-      self.left_motor = old_steering[:left_motor] if old_steering.has_key? :left_motor
-      self.right_motor = old_steering[:right_motor] if old_steering.has_key? :right_motor
-      if old_steering[:power]
-        self.turn_ratio = old_steering[:power] * (old_steering[:direction] == :left ? -1 : 1)
-      else
-        self.turn_ratio = old_steering[:direction]
-      end
-    end
   end
-  alias steering= turn_ratio=
 
   def turn_ratio
     if @ports.size > 1
@@ -83,12 +72,10 @@ class Commands::Move
       0
     end
   end
-  alias steering turn_ratio
-  
 
   # execute the Move command based on the properties specified
   def start
-    @ports.each do |p|
+    (@ports == [:all] ? [:a, :b, :c] : @ports).each do |p|
       @nxt.reset_motor_position(NXT.const_get("MOTOR_#{p.to_s.upcase}"))
     end
 
@@ -97,21 +84,21 @@ class Commands::Move
       mode        = NXT::COAST
       run_state   = NXT::MOTOR_RUN_STATE_IDLE
     else
-      @direction == :forward ? motor_power = @power : motor_power = -@power
+      motor_power = (@direction == :forward ? @power : -@power)
       mode        = NXT::MOTORON | NXT::BRAKE
       run_state   = NXT::MOTOR_RUN_STATE_RUNNING
     end
 
-    if @ports.size == 2
+    if @ports.size == 2 || @ports == [:all]
       mode |= NXT::REGULATED
       reg_mode = NXT::REGULATION_MODE_MOTOR_SYNC
     else
       reg_mode = NXT::REGULATION_MODE_IDLE
     end
-    
-    if @ports.include?(:a) and @ports.include?(:b) and @ports.include?(:c)
+
+    @ports.each do |p|
       @nxt.set_output_state(
-        NXT::MOTOR_ALL,
+        NXT.const_get("MOTOR_#{p.to_s.upcase}"),
         motor_power,
         mode,
         reg_mode,
@@ -119,20 +106,8 @@ class Commands::Move
         run_state,
         tacho_limit
       )
-    else
-      @ports.each do |p|
-        @nxt.set_output_state(
-          NXT.const_get("MOTOR_#{p.to_s.upcase}"),
-          motor_power,
-          mode,
-          reg_mode,
-          turn_ratio,
-          run_state,
-          tacho_limit
-        )
-      end
     end
-    
+
     unless @duration.nil?
       if @duration[:seconds]
         sleep(@duration[:seconds])
@@ -144,13 +119,14 @@ class Commands::Move
       self.stop
     end
   end
-  
+
   # stop the Move command based on the next_action property
   def stop
+
     if @next_action == :brake
-      if @ports.include?(:a) and @ports.include?(:b) and @ports.include?(:c)
+      @ports.each do |p|
         @nxt.set_output_state(
-          NXT::MOTOR_ALL,
+          NXT.const_get("MOTOR_#{p.to_s.upcase}"),
           0,
           NXT::MOTORON | NXT::BRAKE | NXT::REGULATED,
           NXT::REGULATION_MODE_MOTOR_SPEED,
@@ -158,23 +134,11 @@ class Commands::Move
           NXT::MOTOR_RUN_STATE_RUNNING,
           0
         )
-      else
-        @ports.each do |p|
-          @nxt.set_output_state(
-            NXT.const_get("MOTOR_#{p.to_s.upcase}"),
-            0,
-            NXT::MOTORON | NXT::BRAKE | NXT::REGULATED,
-            NXT::REGULATION_MODE_MOTOR_SPEED,
-            0,
-            NXT::MOTOR_RUN_STATE_RUNNING,
-            0
-          )
-        end
       end
     else
-      if @ports.include?(:a) and @ports.include?(:b) and @ports.include?(:c)
+      @ports.each do |p|
         @nxt.set_output_state(
-          NXT::MOTOR_ALL,
+          NXT.const_get("MOTOR_#{p.to_s.upcase}"),
           0,
           NXT::COAST,
           NXT::REGULATION_MODE_IDLE,
@@ -182,22 +146,10 @@ class Commands::Move
           NXT::MOTOR_RUN_STATE_IDLE,
           0
         )
-      else
-        @ports.each do |p|
-          @nxt.set_output_state(
-            NXT.const_get("MOTOR_#{p.to_s.upcase}"),
-            0,
-            NXT::COAST,
-            NXT::REGULATION_MODE_IDLE,
-            0,
-            NXT::MOTOR_RUN_STATE_IDLE,
-            0
-          )
-        end
       end
     end
   end
-  
+
   # attempt to return the output_state requested
   def method_missing(cmd)
     states = {}
@@ -206,5 +158,9 @@ class Commands::Move
     end
     states
   end
-  
+
+  # Aliases
+  alias :port= :ports=
+  alias :steering= :turn_ratio=
+  alias :steering :turn_ratio
 end

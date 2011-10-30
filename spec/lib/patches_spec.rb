@@ -31,4 +31,16 @@ describe String do
       "0x68 0x65 0x6c 0x6c 0x6f ".from_hex_str.should eq("hello")
     end
   end
+
+  describe "#to_freq" do
+    it "should convert a valid note to a frequency" do
+      "a".to_freq.should eq(880)
+    end
+
+    it "should raise an error when given an invalid note" do
+      expect do
+        "w".to_freq
+      end.to raise_error(StringToFreqError)
+    end
+  end
 end

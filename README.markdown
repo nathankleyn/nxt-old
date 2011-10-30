@@ -1,6 +1,6 @@
-This is basically ruby-nxt.  I'm simplifying things and moving it away from rubyforge.
+This is basically ruby-nxt. I'm simplifying things and moving it away from rubyforge.
 
-Low-level interface for communicating directly with the NXT via a Bluetooth serial port or USB.  Implements direct commands outlined in Appendix 2-LEGO MINDSTORMS NXT Direct Commands.pdf
+Low-level interface for communicating directly with the NXT via a Bluetooth serial port or USB. Implements direct commands outlined in Appendix 2-LEGO MINDSTORMS NXT Direct Commands.pdf
 
 Not all functionality is implemented yet!
 
@@ -38,6 +38,6 @@ Print out the current battery level:
 
 ## In-progress tasks
 
-* Converting all of the old tests to RSpec unit tests.
-* Try to use Harald for deviceless Bluetooth testing, will simulate responses.
+* Converting all of the old frameworkless tests to RSpec unit tests.
+* Try to use deviceless Bluetooth testing, will simulate responses.
 * Package it up as a gem called "nxt" to replace the original "ruby-nxt" package.

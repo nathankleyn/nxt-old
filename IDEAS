@@ -1,0 +1,98 @@
+# CURRENT
+
+def set_output_state(port,power,mode,reg_mode,turn_ratio,run_state,tacho_limit)
+  # ...
+end
+
+@nxt.set_output_state(
+  NXT::MOTOR_B,
+  100,
+  NXT::MOTORON,
+  NXT::REGULATION_MODE_MOTOR_SPEED,
+  100,
+  NXT::MOTOR_RUN_STATE_RUNNING,
+  0
+)
+
+# IDEA 1
+
+@nxt.set_output_state(
+  :motor => :b,
+  :power => 100,
+  :mode => :on,
+  :reg_mode => :regulate_speed,
+  :turn_ratio => 100,
+  :state => :running,
+  :tacho_limit => 0
+)
+
+# IDEA 2
+
+@nxt.output.b(
+  :power => 100,
+  :reg_mode => regulate_speed
+)
+
+@nxt.input.one(
+  :type => :x,
+  :mode => :y
+)
+
+@nxt.[input, output].[all, a, b, c | all, 1, 2, 3]
+
+# Further braindumping
+
+Each command call goes into a queue.
+The queue is executed synchronously.
+You can clear the queue at any time.
+Repeating events can schedule time in blocks within the queue to allow non-blocking function.
+Blocks used for callback, or can ask for synchronous exec.
+Use deferred style callbacking.
+
+@nxt.synchronous = false # true by default
+
+@nxt.input.one.set { :mode => :something } do |value|
+  # ...
+end
+
+@nxt.process! # This will block until finish of program, can provide callbacks.
+              # Only available on async queue system.
+
+###
+
+@nxt.before do |command|
+
+end
+
+@nxt.after do |command|
+
+end
+
+@nxt.output.a.set { :power => 80, :seconds => 5 }
+@nxt.input.one.wait_until { :light => 80, :operator => ">=" }
+
+###
+
+# Custom input names for more readable programs.
+
+@nxt.output.add(:rear_left_motor, :a)
+@nxt.output.add(:rear_right_motor, :b)
+@nxt.output.add(:front_motor, :c)
+
+@nxt.input.add(:light_sensor, :two)
+
+@nxt.output.front_motor.set { :power => 80, :seconds => 10 }
+@nxt.input.light_sensor.wait_until { :light => 80, :operator => "<" }
+
+## Async idea 2
+
+# This will start the rear_left_motor until the light sensor detects less than
+# 80% ambient light.
+@nxt.output.async.rear_left_motor.set { :power => 10, :rotations => 20 }
+@nxt.input.light_sensor.wait_until { :light => 80, :operator => "<" }
+@nxt.output.rear_left_motor.stop! # Nice command here
+
+.set(conditions_for_motor = {})
+.stop!(conditions = {}, reset = false)
+.start!(conditions = {}, reset = false)
+.wait_until(conditions_for_sensor = {})

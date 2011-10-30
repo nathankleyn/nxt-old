@@ -16,19 +16,20 @@
 
 # Implements the "Sound" block in NXT-G
 class Commands::Sound
-  
+
   attr_accessor :action
   attr_accessor :control
   attr_accessor :volume # TODO not sure how to set this with direct commands?
+                        # TODO: Pretty sure you can't do this with DC's - NK
   attr_accessor :repeat
   attr_accessor :file
   attr_accessor :note
   attr_accessor :duration
   attr_accessor :wait
-  
+
   def initialize(nxt)
     @nxt      = nxt
-    
+
     # defaults the same as NXT-G
     @action   = :file
     @control  = :play
@@ -47,9 +48,9 @@ class Commands::Sound
     else
       @nxt.play_tone(@note.to_freq,(@duration * 1000).to_i)
     end
-    
+
     # TODO figure out a logical way to repeat a tone without blocking execution
-    
+    # TODO: I would like to implement evented commands, where we use queues - NK.
     if @wait
       if @action == :tone
         sleep(@duration)
@@ -63,40 +64,5 @@ class Commands::Sound
   def stop
     @nxt.stop_sound_playback
   end
-  
-end
 
-class String
-  # converts a note string to equiv frequency in Hz
-  # TODO need to get a better range...
-  def to_freq
-    case self.downcase
-      when "c"
-        523
-      when "c#"
-        554
-      when "d"
-        587
-      when "d#"
-        622
-      when "e"
-        659
-      when "f"
-        698
-      when "f#"
-        740
-      when "g"
-        784
-      when "g#"
-        830
-      when "a"
-        880
-      when "a#"
-        923
-      when "b"
-        988
-      else
-        raise "Unknown Note: #{self}"
-    end
-  end
 end

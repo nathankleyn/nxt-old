@@ -15,12 +15,11 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
-
 # Low-level interface for communicating with the NXT's Ultrasonic
 # sensor. Unlike the other sensors, the Ultrasonic sensor is digital
 # and uses the low-speed I2C protocol for communication. This is
-# defined in Appendix 7 of the Lego Mindstorms NXT SDK. 
-class UltrasonicComm
+# defined in Appendix 7 of the Lego Mindstorms NXT SDK.
+class Communication::Ultrasonic
 
   @@i2c_dev = 0x02
 
@@ -34,9 +33,9 @@ class UltrasonicComm
     'read_factory_scale_divisor' => [0x13, 1],
     'read_measurement_units'     => [0x14, 7],
   }
-  
+
   # value is the i2c address (all of these ops always expect to return 1 byte)
-  @@var_codes = {  
+  @@var_codes = {
     'read_continuous_measurements_interval' => 0x40,
     'read_command_state'                    => 0x41,
     'read_measurement_byte_0'               => 0x42,
@@ -51,7 +50,7 @@ class UltrasonicComm
     'read_actual_scale_factor'              => 0x51,
     'read_actual_scale_divisor'             => 0x52,
   }
-  
+
   # first value is the i2c address, second value is the command
   @@cmd_codes = {
     'off_command'                         => [0x41, 0x00],
@@ -64,12 +63,12 @@ class UltrasonicComm
     'set_actual_scale_factor'             => [0x51],
     'set_actual_scale_divisor'            => [0x52]
   }
-  
-      
+
+
   def self.read_measurement_byte(num)
     eval "self.read_measurement_byte_#{num}"
   end
-  
+
   def self.method_missing(name, *args)
     name = name.to_s
     if @@const_codes.has_key? name
@@ -96,7 +95,7 @@ class UltrasonicComm
 
     data = [@@i2c_dev, addr]
     data += [value] if type == :cmd
-    
+
     [data.size, rx_len] + data
   end
 

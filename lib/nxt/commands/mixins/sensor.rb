@@ -1,6 +1,6 @@
 # Control Mindstorms NXT via Bluetooth or USB
 # Copyright (C) 2006-2009 Tony Buser <tbuser@gmail.com> - http://tonybuser.com
-# Copyright (C) 2006 Matt Zukowski <matt@roughest.net>
+# Copyright (c) 2006 Matt Zukowski <matt@roughest.net> - http://blog.roughest.net
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,23 +15,24 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
+# Common methods used in sensor commands.
+module Commands
+  module Mixins
+    module Sensor
+      def port=(port)
+        @port = port
+        set_mode
+      end
 
-# This script attempts to automatically set the global $DEV variable
-# by searching for a NXT tty device node.
+      def comparison=(operator)
+        raise ArgumentError, "'#{operator}' is not a valid comparison operator." unless operator =~ /^([<>=]=?|!=)$/
+        @comparison = operator
+      end
 
-# TODO: This curently only works on *nix based systems (MacOS X too!)
-#       I don't know how to implement this for Win32 :(
-
-# If there is an NXT or DEV environment variable, or a $DEV global,
-# we'll use that and not try to auto-set it ourselves.
-$DEV = $DEV || ENV['NXT'] || ENV['DEV']
-
-unless $DEV or ENV['NXT'] or ENV['DEV']
-	begin
-		devices = Dir["/dev/*NXT*"]
-		$DEV = devices[0] if devices.size > 0
-		puts "Auto-detected NXT at #{$DEV}"
-	rescue
-		# the /dev directory probably doesn't exist... maybe we're on Win32?
-	end
+      # Returns true or false based on comparison and trigger point.
+      def logic
+        eval "value_scaled #{@comparison} @trigger_point"
+      end
+    end
+  end
 end

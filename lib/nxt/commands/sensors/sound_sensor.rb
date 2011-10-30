@@ -14,69 +14,49 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
-# require File.dirname(File.expand_path(__FILE__))+'/../nxt_comm'
-# require File.dirname(File.expand_path(__FILE__))+'/mixins/sensor'
-require "nxt"
-require "commands/mixins/sensor"
-
-# Implements the "Touch Sensor" block in NXT-G
-class Commands::TouchSensor
+# Implements the "Sound Sensor" block in NXT-G
+class Commands::SoundSensor < Commands::Sensor
 
   include Commands::Mixins::Sensor
 
-  attr_reader :port, :action
-  
+  attr_reader :mode
+  attr_accessor :comparison
+
   def initialize(nxt)
     @nxt      = nxt
-    
+
     # defaults the same as NXT-G
-    @port   = 1
-    @action = :pressed
+    @port           = 2
+    @trigger_point  = 50
+    @comparison     = ">"
+    @mode           = "dba"
     set_mode
   end
 
-  def action=(action)
-    @action = action
+  def mode=(mode)
+    @mode = mode
     set_mode
   end
-  alias trigger_point= action=
-  
-  def comparison=(op)
-  	raise NotImplementedError, "Cannot assign a comparison operator for this sensor type."
+
+  # scaled value read from sensor
+  def sound_level
+    value_scaled
   end
 
-  # returns true or false based on action type
-  def logic
-    case @action
-      when :pressed
-        value_scaled > 0 ? true : false
-      when :released
-        value_scaled > 0 ? false : true
-      when :bumped
-        value_scaled > 0 ? true : false
-    end
-  end
-  
   # returns the raw value of the sensor
   def raw_value
     value_raw
   end
-  
-  # resets the value_scaled property, use this to reset the sensor when in :bumped mode
-  def reset
-    @nxt.reset_input_scaled_value(NXT.const_get("SENSOR_#{@port}"))
-  end
-  
+
   # sets up the sensor port
   def set_mode
-    @action == :bumped ? mode = NXT::PERIODCOUNTERMODE : mode = NXT::BOOLEANMODE
     @nxt.set_input_mode(
       NXT.const_get("SENSOR_#{@port}"),
-      NXT::SWITCH,
-      mode
+      NXT.const_get("SOUND_#{@mode.upcase}"),
+      NXT::PCTFULLSCALEMODE
     )
   end
-  
+
   # attempt to return the input_value requested
   def method_missing(cmd)
     @nxt.get_input_values(NXT.const_get("SENSOR_#{@port}"))[cmd]
