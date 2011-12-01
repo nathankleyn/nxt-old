@@ -1,4 +1,4 @@
-module Nxt
+module NXT
   module Mixins
     module Queue
 

@@ -1,3 +1,5 @@
+require 'pry'
+
 class StringToFreqError < StandardError; end
 
 class String

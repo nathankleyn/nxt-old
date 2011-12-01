@@ -41,3 +41,5 @@ Print out the current battery level:
 * Converting all of the old frameworkless tests to RSpec unit tests.
 * Try to use deviceless Bluetooth testing, will simulate responses.
 * Package it up as a gem called "nxt" to replace the original "ruby-nxt" package.
+* Wrap all modules in a NXT namespace.
+* Move interfaces into a seperate module for each type, ie. SerialPort and USB.

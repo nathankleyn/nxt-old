@@ -1,15 +1,6 @@
-module Nxt
+module NXT
   module Mixins
     module Consts
-
-      # usb const values
-      USB_ID_VENDOR_LEGO = 0x0694
-      USB_ID_PRODUCT_NXT = 0x0002
-      USB_OUT_ENDPOINT   = 0x01
-      USB_IN_ENDPOINT    = 0x82
-      USB_TIMEOUT        = 1000
-      USB_READSIZE       = 64
-      USB_INTERFACE      = 0
 
       # sensors
       SENSOR_1  = 0x00
@@ -117,7 +108,7 @@ module Nxt
         'write_io_map'              => ["system",0x95]
       }
 
-      @@error_codes = {
+      @@error_op_codes = {
         # Direct Commands
         0x20 => "Pending communication transaction in progress",
         0x40 => "Specified mailbox queue is empty",
