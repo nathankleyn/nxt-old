@@ -1,6 +1,17 @@
-This is basically ruby-nxt. I'm simplifying things and moving it away from rubyforge.
+# NXT
 
-Low-level interface for communicating directly with the NXT via a Bluetooth serial port or USB. Implements direct commands outlined in Appendix 2-LEGO MINDSTORMS NXT Direct Commands.pdf
+Control a Lego NXT 2.0 brick using Ruby code. This library works by piping
+commands over a serial connection to the brick, allowing you to write Ruby
+scripts to control your bot. This means you can use both the Bluetooth and USB
+serial ports provided on the brick as interfaces within your code.
+
+This project used to be based on "ruby-nxt", and Tony Buser's subsequent rewrite
+"nxt". It is now a complete rewrite, based heavily in some parts on the
+aforesaid projects internally, but with a brand new external API that should
+prove cleaner and easier to work with.
+
+This code implements direct command, as outlined in "Appendix 2-LEGO MINDSTORMS
+NXT Direct Commands.pdf".
 
 Not all functionality is implemented yet!
 
@@ -39,7 +50,9 @@ Print out the current battery level:
 ## In-progress tasks
 
 * Converting all of the old frameworkless tests to RSpec unit tests.
-* Try to use deviceless Bluetooth testing, will simulate responses.
+* Try to use deviceless Bluetooth testing, will simulate responses using
+  mocks/stubs wherever possible. I'm aiming to have the entire framework
+  testable without a NXT brick.
 * Package it up as a gem called "nxt" to replace the original "ruby-nxt" package.
 * Wrap all modules in a NXT namespace.
 * Move interfaces into a seperate module for each type, ie. SerialPort and USB.

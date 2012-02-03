@@ -1,22 +1,8 @@
-# Control Mindstorms NXT via Bluetooth or USB
-# Copyright (C) 2006-2009 Tony Buser <tbuser@gmail.com> - http://tonybuser.com
-#
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2 of the License
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software Foundation,
-# Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+$:.unshift(File.dirname(File.expand_path(__FILE__)))
 
-$:.unshift File.dirname(File.expand_path(__FILE__))
-
+# FIXME: Remove this when debugging is done.
 require "pry"
+
 require "serialport"
 require "usb"
 require "thread"
@@ -82,11 +68,17 @@ $INTERFACE ||= nil
 #
 #   puts "Battery Level: #{@nxt.get_battery_level/1000.0} V"
 #
-
 module NXT
   class NXT
     include Mixins::Consts
     include Mixins::Queue
+
+    include Mixins::InputOutput
+    include Mixins::Sound
+    include Mixins::LS
+    include Mixins::File
+    include Mixins::Message
+    include Mixins::Program
 
     @@mutex = Mutex.new
 
@@ -123,7 +115,8 @@ module NXT
       @connection.connected?
     end
 
-    # Keep the connection alive and prevents NXT from going to sleep until sleep time.  Also, returns the current sleep time limit in ms
+    # Keep the connection alive and prevents NXT from going to sleep until sleep
+    # time.  Also, returns the current sleep time limit in milliseconds.
     def keep_alive
       result = send_and_receive(@@op_codes["keep_alive"], [])
       result == false ? false : result.join.from_hex_str.unpack("L")[0]

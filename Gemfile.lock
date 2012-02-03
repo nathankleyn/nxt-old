@@ -17,6 +17,7 @@ GEM
       method_source (~> 0.6.7)
       ruby_parser (>= 2.3.1)
       slop (~> 2.1.0)
+    redcarpet (2.1.0)
     rspec (2.6.0)
       rspec-core (~> 2.6.0)
       rspec-expectations (~> 2.6.0)
@@ -31,6 +32,7 @@ GEM
     serialport (1.0.4)
     sexp_processor (3.0.8)
     slop (2.1.0)
+    yard (0.7.5)
 
 PLATFORMS
   ruby
@@ -38,4 +40,6 @@ PLATFORMS
 DEPENDENCIES
   nxt!
   pry (~> 0.9.7)
+  redcarpet (~> 2.1.0)
   rspec (~> 2.6.0)
+  yard (~> 0.7.5)

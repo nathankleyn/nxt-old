@@ -38,6 +38,7 @@ end
   :mode => :y
 )
 
+(Assume psuedo code for this line, these aren't actual Arrays or OR's.)
 @nxt.[input, output].[all, a, b, c | all, 1, 2, 3]
 
 # Further braindumping
@@ -95,4 +96,49 @@ end
 .set(conditions_for_motor = {})
 .stop!(conditions = {}, reset = false)
 .start!(conditions = {}, reset = false)
-.wait_until(conditions_for_sensor = {})
+.wait_until(&block)
+
+## Refined idea
+
+All outputs are asynchronous. You can provide blocks for callbacks. For inputs,
+if you provide a block, it's async, otherwise it's sync.
+
+We're stil going with this general idea:
+
+    @nxt.[motor, sensor, sound].[all, a, b, c | all, 1, 2, 3]
+
+    # output methods
+    .stop!(conditions = {}, reset = false)
+    .start!(conditions = {}, reset = false)
+
+    # input methods
+    .read(&block)
+    # FIXME: are these next two just better as standard Ruby until/while blocks?
+    #        there will be more overheard, but it's standard Ruby...
+    .until(&block)
+    .while(&block)
+
+There is no #set, just use #start!. Without further ado:
+
+@nxt = NXT::Program.new("/some/dev/serialport")
+
+# You can optionally pass these output/input mappings into the constructor,
+# the second argument is a hash of options.
+@nxt.motor.add(:front, :a)
+@nxt.motor.add(:rear_left, :b)
+@nxt.motor.add(:rear_right, :c)
+@nxt.sensor.add(:light, :one)
+
+@nxt.motor.front_motor.start! # No args, will just run forever.
+# Will only run for 10 rotations, block will be called when finished.
+@nxt.motor.rear_left.start!(rotations: 10) do
+  # Called when the 10 rotations have been completed.
+end
+
+light = @nxt.sensor.light.read(:distance)
+# Alternatively:
+@nxt.sensor.light.read(:distance) do |light|
+  # Called when the value is ready, non-blocking.
+end
+
+@nxt.output.all.stop!

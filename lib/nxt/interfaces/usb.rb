@@ -1,5 +1,3 @@
-require 'pry'
-
 module NXT
   module Interface
     class USB
